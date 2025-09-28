@@ -1,0 +1,25 @@
+name: Daily Crypto News to Telegram
+on:
+  schedule:
+    - cron: '0 8 * * *'   # runs every day at 08:00 UTC
+  workflow_dispatch: {}   # allows manual run
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: pip install requests feedparser
+
+      - name: Run script
+        env:
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHAT_ID:   ${{ secrets.TG_CHAT_ID }}
+        run: python send_crypto_news.py

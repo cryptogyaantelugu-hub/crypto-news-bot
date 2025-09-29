@@ -1,4 +1,5 @@
 name: Daily Crypto News to Telegram
+
 on:
   schedule:
     - cron: '30 21 * * *'   # 03:00 IST
@@ -10,8 +11,12 @@ on:
 jobs:
   send:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write   # ✅ allow commit/push of sent_ids.json
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: true   # ✅ needed for push
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -25,4 +30,5 @@ jobs:
         env:
           TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
           TG_CHAT_ID:   ${{ secrets.TG_CHAT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # ✅ required for push
         run: python send_crypto_news.py
